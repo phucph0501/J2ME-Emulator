@@ -1,4 +1,6 @@
 import { StorageManager } from './storage.js';
+import { Settings } from './settings.js';
+import { ThemeManager } from './themes.js';
 
 // Core emulator class
 export class J2MEEmulator {
@@ -8,6 +10,17 @@ export class J2MEEmulator {
         this.gameFile = null;
         this.isRunning = false;
         this.storage = new StorageManager();
+        // Initialize settings and theme manager (attach UI handlers)
+        try {
+            this.settings = new Settings();
+        } catch (e) {
+            console.warn('Settings module not available or failed to init', e);
+        }
+        try {
+            this.themeManager = new ThemeManager();
+        } catch (e) {
+            console.warn('ThemeManager not available or failed to init', e);
+        }
         this.currentGameName = null;
         
         // Screen dimensions (typical J2ME screen)
@@ -33,6 +46,21 @@ export class J2MEEmulator {
 
         // Initial adjust
         this.adjustScreenSize();
+        // Prevent double-tap zoom
+        this.preventDoubleTapZoom();
+    }
+
+    // Prevent double-tap zoom on mobile: detect quick successive touches and prevent the second's default
+    preventDoubleTapZoom() {
+        let lastTouch = 0;
+        document.addEventListener('touchend', (e) => {
+            const now = Date.now();
+            if (now - lastTouch <= 300) {
+                // within 300ms -> likely double-tap, prevent zoom
+                e.preventDefault();
+            }
+            lastTouch = now;
+        }, { passive: false });
     }
 
     adjustScreenSize() {
@@ -55,8 +83,12 @@ export class J2MEEmulator {
         // Helper to add pointer handlers that work with mouse and touch
         const bindButton = (el, downHandler, upHandler) => {
             if (!el) return;
+            // Track whether pointer events handled this element to avoid duplicate click handling
+            el.__pointerActive = false;
+
             el.addEventListener('pointerdown', (e) => {
                 e.preventDefault();
+                el.__pointerActive = true;
                 el.classList.add('active');
                 downHandler(e, el);
             });
@@ -64,8 +96,24 @@ export class J2MEEmulator {
                 e.preventDefault();
                 el.classList.remove('active');
                 if (upHandler) upHandler(e, el);
+                // clear pointer active shortly after
+                setTimeout(() => el.__pointerActive = false, 50);
             });
-            el.addEventListener('pointercancel', () => el.classList.remove('active'));
+            el.addEventListener('pointercancel', () => {
+                el.classList.remove('active');
+                el.__pointerActive = false;
+            });
+
+            // Fallback for environments that don't support pointer events
+            el.addEventListener('click', (e) => {
+                if (el.__pointerActive) {
+                    // already handled by pointer events
+                    return;
+                }
+                e.preventDefault();
+                downHandler(e, el);
+                if (upHandler) upHandler(e, el);
+            });
         };
 
         // D-pad and center
@@ -91,23 +139,47 @@ export class J2MEEmulator {
             bindButton(btn, () => this.handleNumberPress(btn.dataset.key || btn.textContent));
         });
 
-        // File loading: open file picker and handle selection
-        document.getElementById('loadGame')?.addEventListener('click', () => {
-            document.getElementById('gameFile')?.click();
-        });
+        // File loading: handle file input change (input is placed over button so click comes from user)
+        const fileInput = document.getElementById('gameFile');
+        if (fileInput) {
+            fileInput.addEventListener('change', async (e) => {
+                const f = e.target.files && e.target.files[0];
+                if (!f) return;
+                try {
+                    await this.storage.saveGameFile(f.name, f);
+                    await this.loadGame(f);
+                } catch (err) {
+                    console.error('Failed to save uploaded app:', err);
+                    alert('Failed to install app');
+                }
+            });
 
-        document.getElementById('gameFile')?.addEventListener('change', async (e) => {
-            const f = e.target.files && e.target.files[0];
-            if (!f) return;
-            // Save uploaded file into storage so user doesn't need to re-upload later
-            try {
-                await this.storage.saveGameFile(f.name, f);
-                await this.loadGame(f);
-            } catch (err) {
-                console.error('Failed to save uploaded app:', err);
-                alert('Failed to install app');
+            // Drag and drop support on the file input wrapper
+            const installWrap = document.querySelector('.install-wrap');
+            if (installWrap) {
+                installWrap.addEventListener('dragover', (ev) => {
+                    ev.preventDefault();
+                    installWrap.classList.add('dragover');
+                });
+                installWrap.addEventListener('dragleave', (ev) => {
+                    ev.preventDefault();
+                    installWrap.classList.remove('dragover');
+                });
+                installWrap.addEventListener('drop', async (ev) => {
+                    ev.preventDefault();
+                    installWrap.classList.remove('dragover');
+                    const f = ev.dataTransfer && ev.dataTransfer.files && ev.dataTransfer.files[0];
+                    if (!f) return;
+                    try {
+                        await this.storage.saveGameFile(f.name, f);
+                        await this.loadGame(f);
+                    } catch (err) {
+                        console.error('Failed to install dropped app:', err);
+                        alert('Failed to install dropped app');
+                    }
+                });
             }
-        });
+        }
     }
 
     async loadGame(file) {

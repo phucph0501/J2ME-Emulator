@@ -4,6 +4,43 @@
     box-sizing: border-box;
 }
 
+/* Prevent text selection / tap highlight and improve touch handling */
+html, body, button, input, canvas {
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10+ */
+    user-select: none; /* Standard */
+    -webkit-touch-callout: none; /* iOS */
+}
+
+/* Make pointer interactions more predictable */
+button, .install-wrap, .dpad button, .num-pad button, .nav-btn, .soft-keys button {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation; /* prevent default double-tap-to-zoom on many browsers */
+    outline: none;
+}
+
+/* Disable selection highlight for any accidental text selection */
+::selection { background: transparent; color: inherit; }
+
+/* Strongly block gestures on the phone frame and screen to avoid zoom/scroll */
+.phone-frame, .screen-container {
+    touch-action: none;
+}
+
+button:focus { outline: none; }
+
+/* Header soft keys */
+.left-soft button, .right-soft button, .settings-btn {
+    background: #e9e9e9;
+    border: 1px solid #cfcfcf;
+    color: #111;
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 12px;
+}
+
+.settings-btn { margin-left: 8px; cursor: pointer }
+
 body {
     background-color: #f0f0f0;
     display: flex;
@@ -35,43 +72,47 @@ body {
 }
 
 .phone-frame {
-    width: 360px;
+    width: 250px;
     max-width: 92vw;
-    background: #222;
-    border-radius: 20px;
-    padding: 12px;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+    background: linear-gradient(#e6e6e6, #cfcfcf);
+    border-radius: 22px;
+    padding: 10px 12px 14px 12px;
+    box-shadow: 0 10px 28px rgba(0,0,0,0.45);
+    border: 4px solid #111;
 }
 
 .phone-header {
     display:flex;
     justify-content:space-between;
     align-items:center;
-    color:#fff;
+    color:#111;
     padding:6px 8px;
 }
 
-.phone-brand { font-weight:600; color:#ddd }
+.phone-brand { font-weight:700; color:#222; font-size:14px }
 
-.screen-container { height: 320px; }
+.screen-container { height: 260px; background: #0a0a0a; border: 6px solid #bdbdbd; border-radius:6px; overflow:hidden }
 
-.keypad { padding:10px 6px 0 6px; }
+.keypad { padding:8px 6px 4px 6px; }
 
 .nav-row { display:flex; justify-content:space-between; align-items:center; }
 
-.nav-btn { background:#2e2e2e; color:#fff; border:none; padding:10px 12px; border-radius:8px; }
+.nav-btn { background:#2b2b2b; color:#fff; border:none; padding:8px 10px; border-radius:8px; }
 
 .dpad { display:flex; flex-direction:column; align-items:center; gap:6px }
 .dpad-middle { display:flex; gap:6px; align-items:center }
-.dpad button { background:#3a3a3a; color:#fff; border:none; padding:8px 12px; border-radius:6px; }
+.dpad button { background:linear-gradient(#4a4a4a,#2c2c2c); color:#fff; border:none; padding:8px 12px; border-radius:50%; width:36px; height:36px }
 
 .num-pad { display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; margin-top:10px }
-.num-pad button { background:#2b2b2b; color:#fff; border:none; padding:12px 0; border-radius:8px; font-size:1rem }
+.num-pad button { background:linear-gradient(#fafafa,#e6e6e6); color:#111; border:1px solid #bbb; padding:12px 0; border-radius:6px; font-size:1rem }
 
-.soft-keys button { background:#444; color:#fff; border:none; padding:8px 10px; border-radius:6px }
+.soft-keys button { background:#dcdcdc; color:#222; border:none; padding:6px 10px; border-radius:6px }
 
-.file-input { display:flex; justify-content:center; margin-top:10px }
-.install-btn { background:#4CAF50; color:white; border:none; padding:10px 16px; border-radius:6px; cursor:pointer }
+.file-input { display:flex; justify-content:center; margin-top:10px; flex-direction:column; align-items:center }
+.install-wrap { position:relative; display:inline-block }
+.install-wrap input[type=file] { position:absolute; left:0; top:0; width:100%; height:100%; opacity:0; cursor:pointer; }
+.install-btn { background:#197b2f; color:white; border:none; padding:10px 16px; border-radius:6px; cursor:pointer; }
+.drag-hint { font-size:11px; color:#333; margin-top:6px }
 
 /* prevent page scroll when interacting */
 body.noscroll { position: fixed; width:100%; }
