@@ -1,0 +1,369 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #f0f0f0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    font-family: Arial, sans-serif;
+}
+
+.emulator-container {
+    background-color: #333;
+    border-radius: 20px;
+    padding: 20px;
+    max-width: 400px;
+    width: 100%;
+}
+
+.screen-container {
+    background-color: #000;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    aspect-ratio: 4/3;
+    overflow: hidden;
+}
+
+#gameScreen {
+    width: 100%;
+    height: 100%;
+    image-rendering: pixelated;
+}
+
+.controls-container {
+    display: grid;
+    gap: 20px;
+}
+
+.d-pad {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 5px;
+    width: 150px;
+    margin: 0 auto;
+}
+
+.d-pad button {
+    aspect-ratio: 1;
+    border: none;
+    background-color: #666;
+    color: white;
+    border-radius: 5px;
+    font-size: 20px;
+    cursor: pointer;
+}
+
+.d-pad button:active {
+    background-color: #888;
+}
+
+#up { grid-column: 2; }
+#left { grid-column: 1; grid-row: 2; }
+#center { grid-column: 2; grid-row: 2; }
+#right { grid-column: 3; grid-row: 2; }
+#down { grid-column: 2; grid-row: 3; }
+
+.soft-keys {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.soft-keys button {
+    padding: 10px 20px;
+    border: none;
+    background-color: #444;
+    color: white;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.number-pad {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    max-width: 200px;
+    margin: 0 auto;
+}
+
+.number-pad button {
+    aspect-ratio: 1;
+    border: none;
+    background-color: #555;
+    color: white;
+    border-radius: 5px;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.file-input {
+    margin-top: 20px;
+    text-align: center;
+}
+
+.file-input input[type="file"] {
+    display: none;
+}
+
+#loadGame {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.saved-games {
+    margin-top: 20px;
+    background-color: #444;
+    padding: 15px;
+    border-radius: 10px;
+}
+
+.saved-games h3 {
+    color: white;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+#gameList {
+    list-style: none;
+    padding: 0;
+}
+
+#gameList li {
+    background-color: #555;
+    margin-bottom: 10px;
+    padding: 10px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color: white;
+}
+
+.game-info {
+    font-size: 0.8em;
+    color: #ccc;
+    margin: 0 10px;
+}
+
+.load-btn, .delete-btn {
+    padding: 5px 10px;
+    border: none;
+    border-radius: 3px;
+    cursor: pointer;
+    margin-left: 5px;
+}
+
+.load-btn {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.delete-btn {
+    background-color: #f44336;
+    color: white;
+}
+
+/* Settings Modal */
+.modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    z-index: 2000;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    max-width: 500px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+.settings-group {
+    margin-bottom: 20px;
+    padding: 15px;
+    background: #f5f5f5;
+    border-radius: 5px;
+}
+
+.settings-group h3 {
+    margin-bottom: 10px;
+    color: #333;
+}
+
+.setting-item {
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.setting-item label {
+    margin-right: 10px;
+}
+
+.storage-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 15px;
+}
+
+.modal-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+.primary-btn {
+    background-color: #4CAF50;
+    color: white;
+}
+
+.danger-btn {
+    background-color: #f44336;
+    color: white;
+}
+
+/* Header Controls */
+.header-controls {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+}
+
+.sort-select {
+    padding: 8px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+}
+
+.settings-btn {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 5px;
+}
+
+/* Control Buttons */
+.control-buttons {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 5px;
+    margin-top: 10px;
+}
+
+.control-btn {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 5px 10px;
+}
+
+/* Loading Overlay */
+.loading-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    color: white;
+}
+
+.loading-overlay.active {
+    display: flex;
+}
+
+.spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #3498db;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 10px;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Current App Name */
+.app-name {
+    color: white;
+    font-size: 12px;
+    text-align: center;
+    flex-grow: 1;
+    margin: 0 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* Active button state */
+.d-pad button.active,
+.number-pad button.active,
+.soft-keys button.active {
+    background-color: #888;
+    transform: scale(0.95);
+}
+
+@media (max-width: 480px) {
+    .modal-content {
+        width: 95%;
+        max-height: 95vh;
+    }
+
+    .phone-frame {
+        width: 100%;
+        height: 100%;
+        border-radius: 0;
+        padding: 10px;
+    }
+
+    .setting-item {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .setting-item label {
+        margin-bottom: 5px;
+    }
+
+    .d-pad button,
+    .number-pad button,
+    .soft-keys button {
+        min-height: 44px;
+        min-width: 44px;
+    }
+}
