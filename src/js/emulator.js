@@ -18,49 +18,95 @@ export class J2MEEmulator {
         this.initializeControls();
         this.setupEventListeners();
         
-        // Initial app list update
-        this.updateAppGrid();
+        // Initial app list update (no-op if not implemented)
+        if (typeof this.updateAppGrid === 'function') this.updateAppGrid();
     }
 
+    setupEventListeners() {
+        // Prevent page scroll while interacting with the emulator
+        document.addEventListener('touchmove', (e) => {
+            if (this.isRunning) e.preventDefault();
+        }, { passive: false });
+
+        // Adjust canvas when window resizes
+        window.addEventListener('resize', () => this.adjustScreenSize());
+
+        // Initial adjust
+        this.adjustScreenSize();
+    }
+
+    adjustScreenSize() {
+        const container = this.canvas.parentElement;
+        if (!container) return;
+
+        // set canvas logical size to screenWidth x screenHeight
+        this.canvas.width = this.screenWidth;
+        this.canvas.height = this.screenHeight;
+
+        // Fit canvas visually inside container
+        const cw = container.clientWidth;
+        const ch = container.clientHeight;
+        const scale = Math.min(cw / this.screenWidth, ch / this.screenHeight);
+
+        this.canvas.style.width = Math.floor(this.screenWidth * scale) + 'px';
+        this.canvas.style.height = Math.floor(this.screenHeight * scale) + 'px';
+    }
     initializeControls() {
-        // D-pad controls
-        const dpadButtons = ['up', 'right', 'down', 'left', 'center'];
-        dpadButtons.forEach(button => {
-            document.getElementById(button)?.addEventListener('touchstart', (e) => {
+        // Helper to add pointer handlers that work with mouse and touch
+        const bindButton = (el, downHandler, upHandler) => {
+            if (!el) return;
+            el.addEventListener('pointerdown', (e) => {
                 e.preventDefault();
-                this.handleKeyPress(button);
+                el.classList.add('active');
+                downHandler(e, el);
             });
-            document.getElementById(button)?.addEventListener('touchend', (e) => {
+            el.addEventListener('pointerup', (e) => {
                 e.preventDefault();
-                this.handleKeyRelease(button);
+                el.classList.remove('active');
+                if (upHandler) upHandler(e, el);
             });
+            el.addEventListener('pointercancel', () => el.classList.remove('active'));
+        };
+
+        // D-pad and center
+        ['up','down','left','right','center'].forEach(id => {
+            const el = document.getElementById(id);
+            bindButton(el, () => this.handleKeyPress(id), () => this.handleKeyRelease(id));
         });
 
         // Soft keys
-        ['softLeft', 'softRight'].forEach(button => {
-            document.getElementById(button)?.addEventListener('touchstart', (e) => {
-                e.preventDefault();
-                this.handleSoftKey(button);
-            });
+        ['softLeft','softRight'].forEach(id => {
+            const el = document.getElementById(id);
+            bindButton(el, () => this.handleSoftKey(id));
         });
 
-        // Number pad
-        const numberPad = document.querySelector('.number-pad');
-        numberPad?.addEventListener('touchstart', (e) => {
-            e.preventDefault();
-            const button = e.target;
-            if (button.tagName === 'BUTTON') {
-                this.handleNumberPress(button.textContent);
-            }
+        // Navigation buttons (call/end)
+        ['call','end'].forEach(id => {
+            const el = document.getElementById(id);
+            bindButton(el, () => console.log(id + ' pressed'));
         });
 
-        // File loading
+        // Numeric pad
+        document.querySelectorAll('.num-pad button').forEach(btn => {
+            bindButton(btn, () => this.handleNumberPress(btn.dataset.key || btn.textContent));
+        });
+
+        // File loading: open file picker and handle selection
         document.getElementById('loadGame')?.addEventListener('click', () => {
             document.getElementById('gameFile')?.click();
         });
 
-        document.getElementById('gameFile')?.addEventListener('change', (e) => {
-            this.loadGame(e.target.files[0]);
+        document.getElementById('gameFile')?.addEventListener('change', async (e) => {
+            const f = e.target.files && e.target.files[0];
+            if (!f) return;
+            // Save uploaded file into storage so user doesn't need to re-upload later
+            try {
+                await this.storage.saveGameFile(f.name, f);
+                await this.loadGame(f);
+            } catch (err) {
+                console.error('Failed to save uploaded app:', err);
+                alert('Failed to install app');
+            }
         });
     }
 

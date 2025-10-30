@@ -7,40 +7,53 @@
     <link rel="stylesheet" href="src/css/style.css">
 </head>
 <body>
-    <div class="emulator-container">
-        <div class="screen-container">
-            <canvas id="gameScreen"></canvas>
-        </div>
-        <div class="controls-container">
-            <div class="d-pad">
-                <button id="up">▲</button>
-                <button id="right">▶</button>
-                <button id="down">▼</button>
-                <button id="left">◀</button>
-                <button id="center">·</button>
+    <div class="emulator-container nokia-6300">
+        <div class="phone-frame">
+            <div class="phone-header">
+                <div class="left-soft"><button id="softLeft">Menu</button></div>
+                <div class="phone-brand">Nokia</div>
+                <div class="right-soft"><button id="softRight">Back</button></div>
             </div>
-            <div class="soft-keys">
-                <button id="softLeft">Menu</button>
-                <button id="softRight">Back</button>
+
+            <div class="screen-container">
+                <canvas id="gameScreen"></canvas>
             </div>
-            <div class="number-pad">
-                <button>1</button>
-                <button>2</button>
-                <button>3</button>
-                <button>4</button>
-                <button>5</button>
-                <button>6</button>
-                <button>7</button>
-                <button>8</button>
-                <button>9</button>
-                <button>*</button>
-                <button>0</button>
-                <button>#</button>
+
+            <div class="keypad">
+                <div class="nav-row">
+                    <button class="nav-btn" id="call">☎</button>
+                    <div class="dpad">
+                        <button id="up">▲</button>
+                        <div class="dpad-middle">
+                            <button id="left">◀</button>
+                            <button id="center">●</button>
+                            <button id="right">▶</button>
+                        </div>
+                        <button id="down">▼</button>
+                    </div>
+                    <button class="nav-btn" id="end">⏻</button>
+                </div>
+
+                <div class="num-pad">
+                    <button data-key="1">1</button>
+                    <button data-key="2">2</button>
+                    <button data-key="3">3</button>
+                    <button data-key="4">4</button>
+                    <button data-key="5">5</button>
+                    <button data-key="6">6</button>
+                    <button data-key="7">7</button>
+                    <button data-key="8">8</button>
+                    <button data-key="9">9</button>
+                    <button data-key="*">*</button>
+                    <button data-key="0">0</button>
+                    <button data-key="#">#</button>
+                </div>
             </div>
-        </div>
-        <div class="file-input">
-            <input type="file" id="gameFile" accept=".jar,.jad">
-            <button id="loadGame">Load Game</button>
+
+            <div class="file-input">
+                <input type="file" id="gameFile" accept=".jar,.jad" style="display:none">
+                <button id="loadGame" class="install-btn">Install / Load .jar</button>
+            </div>
         </div>
     </div>
     <script src="src/js/emulator.js" type="module"></script>

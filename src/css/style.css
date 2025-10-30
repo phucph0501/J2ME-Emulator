@@ -14,19 +14,18 @@ body {
 }
 
 .emulator-container {
-    background-color: #333;
-    border-radius: 20px;
-    padding: 20px;
-    max-width: 400px;
-    width: 100%;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:20px;
 }
 
 .screen-container {
     background-color: #000;
-    border-radius: 10px;
-    margin-bottom: 20px;
-    aspect-ratio: 4/3;
+    border-radius: 4px;
+    margin: 10px auto;
     overflow: hidden;
+    position: relative;
 }
 
 #gameScreen {
@@ -34,6 +33,48 @@ body {
     height: 100%;
     image-rendering: pixelated;
 }
+
+.phone-frame {
+    width: 360px;
+    max-width: 92vw;
+    background: #222;
+    border-radius: 20px;
+    padding: 12px;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+}
+
+.phone-header {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    color:#fff;
+    padding:6px 8px;
+}
+
+.phone-brand { font-weight:600; color:#ddd }
+
+.screen-container { height: 320px; }
+
+.keypad { padding:10px 6px 0 6px; }
+
+.nav-row { display:flex; justify-content:space-between; align-items:center; }
+
+.nav-btn { background:#2e2e2e; color:#fff; border:none; padding:10px 12px; border-radius:8px; }
+
+.dpad { display:flex; flex-direction:column; align-items:center; gap:6px }
+.dpad-middle { display:flex; gap:6px; align-items:center }
+.dpad button { background:#3a3a3a; color:#fff; border:none; padding:8px 12px; border-radius:6px; }
+
+.num-pad { display:grid; grid-template-columns:repeat(3, 1fr); gap:8px; margin-top:10px }
+.num-pad button { background:#2b2b2b; color:#fff; border:none; padding:12px 0; border-radius:8px; font-size:1rem }
+
+.soft-keys button { background:#444; color:#fff; border:none; padding:8px 10px; border-radius:6px }
+
+.file-input { display:flex; justify-content:center; margin-top:10px }
+.install-btn { background:#4CAF50; color:white; border:none; padding:10px 16px; border-radius:6px; cursor:pointer }
+
+/* prevent page scroll when interacting */
+body.noscroll { position: fixed; width:100%; }
 
 .controls-container {
     display: grid;

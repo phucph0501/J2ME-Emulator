@@ -7,25 +7,34 @@ export class StorageManager {
 
     // Save game binary data
     saveGameFile(fileName, gameData) {
-        try {
-            const games = this.getSavedGames();
-            const reader = new FileReader();
-            
-            reader.onload = () => {
-                const base64Data = reader.result.split(',')[1];
-                games[fileName] = {
-                    data: base64Data,
-                    timestamp: Date.now(),
-                    size: gameData.size
+        // Return a Promise so callers can await until the file is stored
+        return new Promise((resolve, reject) => {
+            try {
+                const games = this.getSavedGames();
+                const reader = new FileReader();
+
+                reader.onload = () => {
+                    try {
+                        const base64Data = reader.result.split(',')[1];
+                        games[fileName] = {
+                            data: base64Data,
+                            timestamp: Date.now(),
+                            size: gameData.size
+                        };
+                        localStorage.setItem(this.GAMES_KEY, JSON.stringify(games));
+                        resolve();
+                    } catch (err) {
+                        reject(err);
+                    }
                 };
-                localStorage.setItem(this.GAMES_KEY, JSON.stringify(games));
-            };
-            
-            reader.readAsDataURL(gameData);
-        } catch (error) {
-            console.error('Error saving game:', error);
-            throw error;
-        }
+
+                reader.onerror = (e) => reject(e);
+                reader.readAsDataURL(gameData);
+            } catch (error) {
+                console.error('Error saving game:', error);
+                reject(error);
+            }
+        });
     }
 
     // Get list of saved games
