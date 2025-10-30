@@ -2,16 +2,17 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Prevent pinch/double-tap zoom on mobile for app-like behavior -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>J2ME Web Emulator</title>
     <link rel="stylesheet" href="src/css/style.css">
 </head>
 <body>
-    <div class="emulator-container nokia-6300">
+    <div class="emulator-container phone-6300">
         <div class="phone-frame">
             <div class="phone-header">
                 <div class="left-soft"><button id="softLeft">Menu</button></div>
-                <div class="phone-brand">Nokia</div>
+                <div class="phone-brand">Pink Phone</div>
                 <div class="right-soft"><button id="softRight">Back</button></div>
             </div>
 
@@ -51,8 +52,11 @@
             </div>
 
             <div class="file-input">
-                <input type="file" id="gameFile" accept=".jar,.jad" style="display:none">
-                <button id="loadGame" class="install-btn">Install / Load .jar</button>
+                <label class="install-wrap">
+                    <input type="file" id="gameFile" accept=".jar,.jad">
+                    <button id="loadGame" class="install-btn" type="button">Install / Load .jar</button>
+                </label>
+                <div class="drag-hint">or drag & drop .jar here</div>
             </div>
         </div>
     </div>

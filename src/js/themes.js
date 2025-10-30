@@ -1,11 +1,11 @@
 export const THEMES = {
     classic: {
-        name: 'Classic Nokia',
+        name: 'Classic Retro',
         phoneColor: '#1B1F22',
         buttonColor: '#2C3539',
         textColor: '#32CD32',
         screenBorder: '5px solid #1B1F22',
-        fontFamily: "'Nokia Pure Text', sans-serif",
+        fontFamily: 'system-ui, -apple-system, "Segoe UI", Roboto, sans-serif',
         buttonStyle: 'round',
         screenFilter: 'none',
         backgroundColor: '#1B1F22'
